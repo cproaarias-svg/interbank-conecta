@@ -208,6 +208,7 @@ const AFL=[35,55,70,95,90,60,50,75];
 function afluencia(ag,i){ return Math.max(10,Math.min(100,AFL[i]+((ag*13+i*7)%15)-7)); }
 function colorAfl(v){ return v>=80?'rojo':v>=55?'ambar':'verde'; }
 
+const LOGO=(sz)=>`<svg width="${sz}" height="${sz}" style="width:${sz}px;height:${sz}px" viewBox="0 0 64 64" aria-label="Logo Interbank Conecta"><path d="M46.1 17.9 A20 20 0 1 0 46.1 46.1" fill="none" stroke="#00A651" stroke-width="8" stroke-linecap="round"/><rect x="25" y="25" width="14" height="14" rx="3.5" fill="#00843F"/><path d="M28.5 32.2l2.6 2.6 4.6-5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="51" cy="23" r="3.6" fill="#D93025"/><circle cx="53" cy="32" r="3.6" fill="#F2A900"/><circle cx="51" cy="41" r="3.6" fill="#00A651"/></svg>`;
 /* ---------- Datos ---------- */
 const KEY='ibconecta_cliente_v2'; let mem=null;
 function load(){ try{const s=localStorage.getItem(KEY); if(s) return JSON.parse(s);}catch(e){} return mem; }
@@ -324,7 +325,7 @@ const V={};
 
 /* 1 · INGRESO */
 V.login=()=>`<div class="login">
-  <div class="logo"><div class="mark">${ICON.link}</div><h1>INTERBANK CONECTA</h1><p>Sistema de seguimiento y continuidad<br>de atención al cliente</p></div>
+  <div class="logo"><div class="mark" style="width:92px;height:92px;border-radius:26px">${LOGO(70)}</div><h1>INTERBANK CONECTA</h1><p>Sistema de seguimiento y continuidad<br>de atención al cliente</p></div>
   <div style="margin-top:auto">
     <div class="card" style="box-shadow:0 4px 14px rgba(0,0,0,.08)"><div class="row"><div class="fic">${ICON.user}</div><div><b>Soy cliente</b><div class="muted small">Registra tu inconveniente y sigue tu caso de principio a fin</div></div></div>
       <label>¿Cómo te llamas?</label><input id="f-nombre" placeholder="Escribe tu nombre" autocomplete="given-name" maxlength="40" onkeydown="if(event.key==='Enter')ingresar()">
