@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="theme-color" content="#00A651">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="IB Conecta">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<title>Interbank Conecta</title>
+<style>
+:root{
+  --verde:#00A651; --verde-osc:#00843F; --verde-cl:#E6F6EC;
+  --gris:#5F6B76; --gris-cl:#F2F4F5; --gris-bd:#E1E5E8; --texto:#1F2A33;
+  --ambar:#F2A900; --ambar-cl:#FFF5D9; --rojo:#D93025; --rojo-cl:#FDECEA;
+  --azul:#1565C0; --azul-cl:#E8F0FB;
+  --safe-b:env(safe-area-inset-bottom,0px); --safe-t:env(safe-area-inset-top,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:#DDE3E7;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--texto)}
+button,input,select,textarea{font:inherit}
+#app{position:relative;max-width:440px;height:100dvh;margin:0 auto;background:var(--gris-cl);display:flex;flex-direction:column;overflow:hidden}
+@media (min-width:600px){
+  body{display:flex;align-items:center;justify-content:center;padding:20px 0}
+  #app{height:min(860px,calc(100vh - 40px));border-radius:36px;box-shadow:0 20px 60px rgba(0,0,0,.25);border:10px solid #1d1d1f}
+}
+/* Barra superior */
+.topbar{background:var(--verde);color:#fff;padding:calc(12px + var(--safe-t)) 16px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.topbar.asesor{background:#2F3B45}
+.topbar h1{font-size:18px;margin:0;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar .sub{font-size:12px;opacity:.85;font-weight:400}
+.iconbtn{background:rgba(255,255,255,.18);border:0;color:#fff;width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;position:relative}
+.iconbtn svg{width:22px;height:22px}
+.dot{position:absolute;top:6px;right:6px;min-width:16px;height:16px;border-radius:8px;background:var(--rojo);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px;border:2px solid var(--verde)}
+.demo-tag{background:#fff;color:var(--gris);font-size:10.5px;text-align:center;padding:4px 8px;border-bottom:1px solid var(--gris-bd);flex-shrink:0}
+/* Contenido */
+main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:16px 14px 24px}
+.card{background:#fff;border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.06);word-wrap:break-word;overflow-wrap:anywhere}
+.card.tap{cursor:pointer;transition:transform .1s}
+.card.tap:active{transform:scale(.98)}
+.hero{background:linear-gradient(135deg,var(--verde),var(--verde-osc));color:#fff}
+.hero.asesor{background:linear-gradient(135deg,#2F3B45,#4A5864)}
+h2{font-size:16px;margin:4px 2px 10px;font-weight:700}
+h3{font-size:15px;margin:0 0 6px}
+p{margin:0 0 6px;line-height:1.4}
+.muted{color:var(--gris);font-size:13px}
+.small{font-size:12px}
+.row{display:flex;align-items:center;gap:10px}
+.between{justify-content:space-between}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:52px;border:0;border-radius:14px;background:var(--verde);color:#fff;font-weight:700;font-size:16px;cursor:pointer;padding:12px 16px;text-align:center}
+.btn:active{background:var(--verde-osc)}
+.btn.sec{background:#fff;color:var(--verde-osc);border:2px solid var(--verde)}
+.btn.gris{background:var(--gris-cl);color:var(--texto);border:1px solid var(--gris-bd)}
+.btn.rojo{background:var(--rojo)}
+.btn.dark{background:#2F3B45}
+.btn.sm{min-height:42px;font-size:14px;border-radius:12px;padding:8px 12px}
+.btn svg{width:20px;height:20px;flex-shrink:0}
+.mt{margin-top:10px}.mb{margin-bottom:10px}
+.quick{background:#fff;border-radius:16px;padding:14px 8px;border:0;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--texto);cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.06);min-height:96px;text-align:center}
+.quick .ic{width:44px;height:44px;border-radius:14px;background:var(--verde-cl);color:var(--verde-osc);display:flex;align-items:center;justify-content:center}
+.quick .ic svg{width:24px;height:24px}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap}
+.b-verde{background:var(--verde-cl);color:var(--verde-osc)}
+.b-ambar{background:var(--ambar-cl);color:#9A6B00}
+.b-rojo{background:var(--rojo-cl);color:var(--rojo)}
+.b-azul{background:var(--azul-cl);color:var(--azul)}
+.b-gris{background:var(--gris-cl);color:var(--gris)}
+.luz{width:12px;height:12px;border-radius:50%;display:inline-block;flex-shrink:0}
+.l-verde{background:var(--verde)}.l-ambar{background:var(--ambar)}.l-rojo{background:var(--rojo)}.l-ok{background:var(--azul)}
+.code{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700;letter-spacing:.5px}
+.progress{height:8px;background:var(--gris-cl);border-radius:6px;overflow:hidden;margin:8px 0 4px}
+.progress>div{height:100%;background:var(--verde);border-radius:6px;transition:width .4s}
+/* Formulario */
+label{display:block;font-size:13px;font-weight:600;margin:12px 0 6px;color:var(--gris)}
+input,select,textarea{width:100%;font-size:16px;padding:13px 14px;border:1.5px solid var(--gris-bd);border-radius:12px;background:#fff;color:var(--texto);outline:none;-webkit-appearance:none;appearance:none}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235F6B76' stroke-width='2' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+input:focus,select:focus,textarea:focus{border-color:var(--verde)}
+textarea{min-height:96px;resize:vertical}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1.5px solid var(--gris-bd);background:#fff;border-radius:20px;padding:9px 14px;font-size:14px;cursor:pointer;color:var(--texto)}
+.chip.on{background:var(--verde);border-color:var(--verde);color:#fff;font-weight:600}
+.chip.asesor.on{background:#2F3B45;border-color:#2F3B45}
+/* Timeline */
+.tl{position:relative;padding-left:22px}
+.tl:before{content:"";position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:var(--gris-bd)}
+.tl-item{position:relative;padding-bottom:14px}
+.tl-item:before{content:"";position:absolute;left:-20px;top:4px;width:12px;height:12px;border-radius:50%;background:#fff;border:2px solid var(--gris)}
+.tl-item.cliente:before{border-color:var(--verde);background:var(--verde-cl)}
+.tl-item.asesor:before{border-color:#2F3B45;background:#2F3B45}
+.tl-item.sistema:before{border-color:var(--azul)}
+.tl-item .who{font-size:12px;font-weight:700;color:var(--gris)}
+.tl-item .txt{font-size:14px;margin-top:2px;line-height:1.4}
+.doc{display:inline-flex;align-items:center;gap:6px;background:var(--gris-cl);border-radius:8px;padding:5px 9px;font-size:12px;margin-top:5px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.steps .st{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px dashed var(--gris-bd)}
+.steps .st:last-child{border-bottom:0}
+.chk{width:24px;height:24px;border-radius:50%;border:2px solid var(--gris-bd);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-size:14px}
+.chk.on{background:var(--verde);border-color:var(--verde)}
+.chk.now{border-color:var(--ambar)}
+/* Navegación inferior */
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:#fff;border-radius:14px;padding:4px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.06);position:sticky;top:-16px;z-index:3}
+.seg button{border:0;background:none;padding:10px 2px;border-radius:10px;font-size:12px;white-space:nowrap;letter-spacing:-.2px;font-weight:600;color:var(--gris);cursor:pointer;min-height:44px}
+.seg button.on{background:var(--verde);color:#fff}
+.seg button.on.asesor{background:#2F3B45}
+.conn{font-size:12px;color:var(--verde-osc);background:var(--verde-cl);border-radius:12px;padding:10px 12px;margin-bottom:12px;line-height:1.4}
+.fic{width:46px;height:46px;border-radius:14px;background:var(--verde-cl);color:var(--verde-osc);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px}
+.fic svg{width:24px;height:24px}
+.farrow{text-align:center;font-size:12px;color:var(--verde-osc);font-weight:600;margin:-6px 0 6px}
+.minilight{display:inline-flex;gap:4px;background:#1F2A33;border-radius:10px;padding:4px 6px}
+.minilight i{width:10px;height:10px;border-radius:50%;background:#3a4650;display:block}
+nav.bottom{display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border-top:1px solid var(--gris-bd);padding:6px 4px calc(6px + var(--safe-b));flex-shrink:0}
+nav.bottom button{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;color:var(--gris);padding:6px 0;cursor:pointer;min-height:54px;position:relative}
+nav.bottom button svg{width:24px;height:24px}
+nav.bottom button.on{color:var(--verde-osc);font-weight:700}
+nav.bottom.asesor button.on{color:#2F3B45}
+nav.bottom .nb{position:absolute;top:2px;left:calc(50% + 6px);background:var(--rojo);color:#fff;border-radius:9px;font-size:10px;min-width:17px;height:17px;display:flex;align-items:center;justify-content:center;padding:0 4px;font-weight:700}
+.fab{position:absolute;right:18px;bottom:calc(84px + var(--safe-b));width:58px;height:58px;border-radius:50%;background:var(--verde);color:#fff;border:0;box-shadow:0 6px 16px rgba(0,166,81,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5}
+.fab svg{width:28px;height:28px}
+/* Hoja inferior y toast */
+.sheet-bg{position:absolute;inset:0;background:rgba(0,0,0,.4);z-index:20;display:flex;align-items:flex-end;animation:fade .2s}
+.sheet{background:#fff;width:100%;border-radius:22px 22px 0 0;padding:10px 16px calc(18px + var(--safe-b));max-height:88%;overflow-y:auto;animation:up .25s}
+.sheet .grab{width:42px;height:5px;background:var(--gris-bd);border-radius:3px;margin:0 auto 12px}
+@keyframes up{from{transform:translateY(100%)}to{transform:none}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.toast{position:absolute;left:16px;right:16px;bottom:calc(90px + var(--safe-b));background:#1F2A33;color:#fff;padding:13px 16px;border-radius:14px;font-size:14px;z-index:30;animation:up .25s;box-shadow:0 6px 20px rgba(0,0,0,.3)}
+/* Ingreso */
+.login{flex:1;display:flex;flex-direction:column;background:linear-gradient(180deg,var(--verde) 0%,var(--verde-osc) 55%,#fff 55%);padding:calc(40px + var(--safe-t)) 20px calc(24px + var(--safe-b));overflow-y:auto}
+.logo{color:#fff;text-align:center;margin-bottom:24px}
+.logo .mark{width:72px;height:72px;border-radius:22px;background:#fff;color:var(--verde);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;box-shadow:0 8px 20px rgba(0,0,0,.15)}
+.logo .mark svg{width:40px;height:40px}
+.logo h1{margin:0;font-size:26px}
+.logo p{opacity:.9;font-size:14px;margin-top:6px}
+.role{display:flex;align-items:center;gap:14px;text-align:left;padding:16px;border-radius:18px;background:#fff;border:2px solid transparent;cursor:pointer;width:100%;margin-bottom:12px;box-shadow:0 4px 14px rgba(0,0,0,.08)}
+.role:active{border-color:var(--verde)}
+.role .ic{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.role .ic svg{width:28px;height:28px}
+.empty{text-align:center;padding:30px 10px;color:var(--gris)}
+.kpi{text-align:center;padding:12px 6px;border-radius:14px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.06);cursor:pointer;border:2px solid transparent}
+.kpi.on{border-color:#2F3B45}
+.kpi b{display:block;font-size:24px}
+.kpi span{font-size:11.5px;color:var(--gris)}
+.alert{border-left:5px solid var(--rojo)}
+.alert.ambar{border-left-color:var(--ambar)}
+.pill-ch{font-size:11px;font-weight:600;background:var(--gris-cl);color:var(--gris);padding:2px 8px;border-radius:10px;margin-left:4px}
+.searchbox{display:flex;gap:8px}
+.searchbox input{flex:1;text-transform:uppercase}
+.searchbox .btn{width:auto;min-width:56px}
+.sep{height:1px;background:var(--gris-bd);margin:12px 0}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* =========================================================
+   INTERBANK CONECTA — App del cliente (versión final)
+   Secuencia: Ingreso → Registro → Código → Historial (Pasaporte)
+              → Compromisos → Semáforo → Caso solucionado
+   Prototipo académico · Creatividad Empresarial UTP
+   ========================================================= */
+const H=3600*1000;
+const ICON = {
+  home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>',
+  list:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',
+  track:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>',
+  user:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>',
+  back:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
+  bell:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+  pass:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="2" width="16" height="20" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M8 17h8"/></svg>',
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>',
+  light:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="2" width="10" height="20" rx="3"/><circle cx="12" cy="7" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="17" r="1.6" fill="currentColor"/></svg>',
+  alert:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/></svg>',
+  headset:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="2" y="14" width="5" height="6" rx="2"/><rect x="17" y="14" width="5" height="6" rx="2"/></svg>',
+  clip:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 11l-9 9a5 5 0 0 1-7-7l9-9a3.5 3.5 0 0 1 5 5l-9 9a2 2 0 0 1-3-3l8-8"/></svg>',
+  send:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg>',
+  clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  logout:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 17l5-5-5-5M15 12H3"/></svg>',
+  ticket:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2v-2a2 2 0 0 0 0-4z"/><path d="M14 6v12" stroke-dasharray="2 2"/></svg>',
+  phone:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2"/></svg>',
+  bolt:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>',
+  link:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M10 14a4 4 0 0 0 6 0l3-3a4 4 0 0 0-6-6l-1 1"/><path d="M14 10a4 4 0 0 0-6 0l-3 3a4 4 0 0 0 6 6l1-1"/></svg>'
+};
+
+const TIPOS={
+  'Cargo no reconocido':{sla:72,area:'Prevención de fraudes',sol:'Confirmamos que el cargo no fue realizado por ti. El monto fue devuelto a tu cuenta.'},
+  'Transferencia no reflejada':{sla:24,area:'Operaciones',sol:'La transferencia fue abonada al destinatario.'},
+  'Problema con tarjeta':{sla:48,area:'Tarjetas',sol:'Tu tarjeta fue reactivada y ya puedes usarla.'},
+  'Cobro de comisión':{sla:96,area:'Reclamos y comisiones',sol:'Se devolvió la comisión cobrada a tu cuenta.'},
+  'Acceso a la app':{sla:24,area:'Canales digitales',sol:'Tu usuario fue desbloqueado. Ya puedes ingresar a la app.'},
+  'Otro inconveniente':{sla:72,area:'Experiencia del cliente',sol:'Tu solicitud fue atendida y cerrada.'}
+};
+const CANALES=['App','Llamada','Agencia'];
+const PASOS=['Registro del caso','Validación de información','Revisión del área responsable','Respuesta y solución al cliente'];
+const ESTADOS={registrado:'Registrado',proceso:'En proceso',espera:'Esperando tu respuesta',solucionado:'Solucionado'};
+const ASESORES=['Carla Mendoza','Luis Ramírez','Rosa Quispe','Jorge Salazar'];
+const AUTO={
+  'Acceso a la app':{btn:'Desbloquear mi usuario ahora',pasos:['Validando identidad con token digital…','Verificando bloqueo por intentos fallidos…','Usuario desbloqueado'],fin:'Tu usuario fue desbloqueado. Ya puedes ingresar a la app con tu clave.'},
+  'Transferencia no reflejada':{btn:'Rastrear mi transferencia ahora',pasos:['Buscando la operación…','Consultando con el banco de destino…','Operación ubicada'],fin:'La transferencia fue abonada al destinatario hoy.'},
+  'Problema con tarjeta':{btn:'Diagnosticar mi tarjeta ahora',pasos:['Revisando estado de la tarjeta…','Detectado: bloqueo preventivo por compra inusual','Bloqueo levantado'],fin:'Tu tarjeta tenía un bloqueo preventivo y ya fue reactivada.'}
+};
+const AGENCIAS=['Agencia Ate Vitarte','Agencia Centro de Lima','Agencia San Juan de Lurigancho','Agencia Los Olivos'];
+const HORAS=['09:00','10:00','11:00','12:00','13:00','15:00','16:00','17:00'];
+const AFL=[35,55,70,95,90,60,50,75];
+function afluencia(ag,i){ return Math.max(10,Math.min(100,AFL[i]+((ag*13+i*7)%15)-7)); }
+function colorAfl(v){ return v>=80?'rojo':v>=55?'ambar':'verde'; }
+
+/* ---------- Datos ---------- */
+const KEY='ibconecta_cliente_v2'; let mem=null;
+function load(){ try{const s=localStorage.getItem(KEY); if(s) return JSON.parse(s);}catch(e){} return mem; }
+function save(){ mem=DB; try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){} }
+function now(){ return Date.now()+(DB?DB.offset:0); }
+
+function seed(){
+  const t=Date.now();
+  const mk=(code,tipo,canal,desc,horasAtras,estado,hechos,o={})=>{
+    const created=t-horasAtras*H, T=TIPOS[tipo];
+    const c={code,tipo,canal,desc,created,sla:T.sla,area:T.area,responsable:o.resp||ASESORES[0],estado,blocked:!!o.blocked,blockReason:o.br||'',
+      pasos:PASOS.map((p,i)=>({n:p,done:i<hechos})),history:[],docs:[],last:created};
+    c.history.push({t:created,who:'cliente',ch:canal,txt:desc});
+    c.history.push({t:created+60000,who:'sistema',ch:canal,txt:`Pasaporte ${code} creado. Área: ${c.area}. Responsable: ${c.responsable}. Plazo comprometido: ${c.sla} h.`});
+    (o.h||[]).forEach(h=>{const tt=created+h[0]*H; c.history.push({t:tt,who:h[1],by:h[1]==='asesor'?c.responsable:undefined,ch:h[2],txt:h[3],doc:h[4]}); if(h[4]) c.docs.push(h[4]); c.last=Math.max(c.last,tt);});
+    if(estado==='solucionado'){ c.solucion=T.sol; c.solvedAt=c.last; c.rating=o.rating||0; }
+    return c;
+  };
+  return {offset:0,started:false,nombre:'',seq:1000,tseq:0,notifs:[],turnos:[],llamadas:[],cases:[]};
+}
+let DB=load()||seed(); save();
+
+/* ---------- Semáforo ---------- */
+function deadline(c){ return c.created+c.sla*H; }
+function semaforo(c){
+  if(c.estado==='solucionado') return 'ok';
+  const n=now(), usado=(n-c.created)/(c.sla*H), sin=n-c.last;
+  if(c.blocked||n>deadline(c)||sin>48*H) return 'rojo';
+  if(usado>0.6||sin>24*H) return 'ambar';
+  return 'verde';
+}
+function motivo(c){
+  const s=semaforo(c), n=now();
+  if(s==='ok') return 'Caso cerrado';
+  if(c.blocked) return 'Detenido: '+(c.blockReason||'bloqueo en un área');
+  if(n>deadline(c)) return 'Plazo comprometido vencido';
+  if(n-c.last>48*H) return 'Sin movimiento por más de 48 h';
+  if(n-c.last>24*H) return 'Sin movimiento por más de 24 h';
+  if(s==='ambar') return 'Consumió más del 60% del plazo';
+  return 'Avanzando con normalidad';
+}
+const SEM={verde:{t:'En plazo',cls:'b-verde',l:'l-verde'},ambar:{t:'En riesgo',cls:'b-ambar',l:'l-ambar'},rojo:{t:'Detenido',cls:'b-rojo',l:'l-rojo'},ok:{t:'Solucionado',cls:'b-azul',l:'l-ok'}};
+function semBadge(c){ const S=SEM[semaforo(c)]; return `<span class="badge ${S.cls}"><span class="luz ${S.l}"></span>${S.t}</span>`; }
+function pct(c){ return Math.round(c.pasos.filter(p=>p.done).length/c.pasos.length*100); }
+function fmtDur(ms){ const h=Math.round(ms/H); if(h<1) return 'menos de 1 h'; if(h<48) return h+' h'; return Math.round(h/24)+' días'; }
+function restante(c){ if(c.estado==='solucionado') return 'Caso cerrado'; const r=deadline(c)-now(); return r<=0?'Plazo vencido hace '+fmtDur(-r):'Respuesta estimada en '+fmtDur(r); }
+function fmtFecha(t){ const d=new Date(t); return d.toLocaleDateString('es-PE',{day:'2-digit',month:'short'})+' · '+d.toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'}); }
+function esc(s){ return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function nombre(){ return (DB.nombre||'Cliente').trim(); }
+function primerNombre(){ return nombre().split(/\s+/)[0]; }
+function iniciales(){ return nombre().split(/\s+/).slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'C'; }
+function getCase(code){ return DB.cases.find(c=>c.code===code); }
+function misCasos(){ return DB.cases.slice().sort((a,b)=>b.last-a.last); }
+function pendiente(c){ const p=c.pasos.find(p=>!p.done); return p?p.n:'Ninguna — caso cerrado'; }
+function notify(code,txt){ DB.notifs.unshift({t:now(),code,txt,read:false}); }
+function unread(){ return DB.notifs.filter(n=>!n.read).length; }
+
+/* Monitor del semáforo: registra cambios de color y reasigna los casos en rojo */
+function cargas(){ const m={}; ASESORES.forEach(a=>m[a]=0); DB.cases.forEach(c=>{ if(c.estado!=='solucionado'&&m[c.responsable]!==undefined) m[c.responsable]++; }); return m; }
+function monitor(){
+  let ch=false;
+  DB.cases.forEach(c=>{
+    const s=semaforo(c);
+    if(c.lastSem===undefined){ c.lastSem=s; ch=true; }
+    else if(s!==c.lastSem){
+      const t=now();
+      if(s==='ambar') c.history.push({t,who:'sistema',ch:'Semáforo',txt:`Semáforo en ÁMBAR (${motivo(c)}). Se envió una alerta preventiva a ${c.responsable}.`});
+      if(s==='verde') c.history.push({t,who:'sistema',ch:'Semáforo',txt:'Semáforo volvió a VERDE: tu caso avanza con normalidad.'});
+      c.lastSem=s; ch=true;
+    }
+    if(s==='rojo'&&!c.autoEsc){
+      const m=cargas(), libre=ASESORES.filter(a=>a!==c.responsable).sort((a,b)=>m[a]-m[b])[0], prev=c.responsable;
+      c.responsable=libre; c.autoEsc=true; c.prioridad=true; c.lastSem='rojo';
+      c.history.push({t:now()+1,who:'sistema',ch:'Semáforo',txt:`Semáforo en ROJO (${motivo(c)}). Tu caso fue reasignado de ${prev} a ${libre} con prioridad alta.`});
+      notify(c.code,`🚦 Detectamos un retraso en tu caso ${c.code}. Ya fue asignado con prioridad a ${libre}.`);
+      ch=true;
+    }
+  });
+  return ch;
+}
+
+/* ---------- Navegación ---------- */
+let view={name:DB.started?'home':'login',params:{}}, stack=[], dTab='pasaporte', listF='todos', semF='todos', semSeg='sol', agSel=0;
+function go(name,params={}){ stack.push(view); view={name,params}; render(); const m=document.querySelector('main'); if(m) m.scrollTop=0; }
+function back(){ view=stack.pop()||{name:'home',params:{}}; render(); }
+function tab(name){ stack=[]; view={name,params:{}}; render(); }
+function openCase(code,t){ dTab=t||'pasaporte'; go('detail',{code}); }
+function toast(msg){ const a=document.getElementById('app'); const t=document.createElement('div'); t.className='toast'; t.textContent=msg; a.appendChild(t); setTimeout(()=>t.remove(),2800); }
+function sheet(html){ closeSheet(); const bg=document.createElement('div'); bg.className='sheet-bg'; bg.id='sheet'; bg.innerHTML=`<div class="sheet"><div class="grab"></div>${html}</div>`; bg.addEventListener('click',e=>{if(e.target===bg) closeSheet();}); document.getElementById('app').appendChild(bg); }
+function closeSheet(){ const s=document.getElementById('sheet'); if(s) s.remove(); }
+
+function topbar(title,sub,o={}){
+  const u=unread();
+  return `<div class="topbar">${o.back?`<button class="iconbtn" onclick="back()" aria-label="Volver">${ICON.back}</button>`:''}<h1>${esc(title)}${sub?`<div class="sub">${esc(sub)}</div>`:''}</h1>${o.noBell?'':`<button class="iconbtn" onclick="go('notifs')" aria-label="Avisos">${ICON.bell}${u?`<span class="dot">${u}</span>`:''}</button>`}</div>
+  <div class="demo-tag">Prototipo académico · Creatividad Empresarial UTP · No es una app oficial</div>`;
+}
+function bottomNav(a){
+  const it=[['home','Inicio',ICON.home],['list','Mis solicitudes',ICON.list],['sem','Semáforo',ICON.light],['profile','Perfil',ICON.user]];
+  return `<nav class="bottom">${it.map(i=>`<button class="${a===i[0]?'on':''}" onclick="tab('${i[0]}')">${i[2]}<span>${i[1]}</span></button>`).join('')}</nav>`;
+}
+function caseCard(c,t){
+  return `<div class="card tap" onclick="openCase('${c.code}','${t||'pasaporte'}')" ${t==='semaforo'?`style="border-left:5px solid var(--${semaforo(c)==='ok'?'azul':semaforo(c)})"`:''}>
+    <div class="row between"><span class="code small" style="color:var(--verde-osc)">${c.code}</span>${semBadge(c)}</div>
+    <h3 style="margin-top:8px">${esc(c.tipo)}</h3>
+    ${c.prioridad&&c.estado!=='solucionado'?`<p class="small" style="color:var(--rojo)">⚑ Prioridad alta · reasignado a ${esc(c.responsable)}</p>`:''}
+    <p class="small muted">${c.estado==='solucionado'?'Caso cerrado':'Pendiente: '+esc(pendiente(c))}</p>
+    ${t==='semaforo'?`<p class="small muted">🚦 ${esc(motivo(c))}</p>`:''}
+    <div class="progress"><div style="width:${pct(c)}%"></div></div><div class="row between small muted"><span>${pct(c)}% completado</span><span>${esc(restante(c))}</span></div>
+  </div>`;
+}
+
+/* =================== PANTALLAS =================== */
+const V={};
+
+/* 1 · INGRESO */
+V.login=()=>`<div class="login">
+  <div class="logo"><div class="mark">${ICON.link}</div><h1>INTERBANK CONECTA</h1><p>Sistema de seguimiento y continuidad<br>de atención al cliente</p></div>
+  <div style="margin-top:auto">
+    <div class="card" style="box-shadow:0 4px 14px rgba(0,0,0,.08)"><div class="row"><div class="fic">${ICON.user}</div><div><b>Soy cliente</b><div class="muted small">Registra tu inconveniente y sigue tu caso de principio a fin</div></div></div>
+      <label>¿Cómo te llamas?</label><input id="f-nombre" placeholder="Escribe tu nombre" autocomplete="given-name" maxlength="40" onkeydown="if(event.key==='Enter')ingresar()">
+      <button class="btn mt" onclick="ingresar()">Ingresar</button></div>
+    <p class="small muted" style="text-align:center;margin-top:6px">Prototipo académico con datos ficticios.<br>No solicita claves ni datos reales.</p>
+  </div></div>`;
+function ingresar(){ const n=(document.getElementById('f-nombre')||{}).value||''; if(n.trim().length<2){ toast('Escribe tu nombre para continuar'); return; } DB.nombre=n.trim(); DB.started=true; save(); stack=[]; view={name:'home',params:{}}; render(); }
+
+/* Inicio */
+V.home=()=>{
+  const cs=misCasos(), act=cs.filter(c=>c.estado!=='solucionado'), cnt={verde:0,ambar:0,rojo:0}; act.forEach(c=>cnt[semaforo(c)]++);
+  const next=act.slice().sort((a,b)=>deadline(a)-deadline(b))[0], sol=cs.length-act.length;
+  return topbar('Hola, '+primerNombre(),'Bienvenido(a) a Interbank Conecta')+`<main>
+  <div class="card hero"><p style="opacity:.9;font-size:13px">Solicitudes activas</p>
+    <div class="row between"><b style="font-size:34px">${act.length}</b><span class="badge" style="background:rgba(255,255,255,.2);color:#fff">${sol} solucionada${sol===1?'':'s'}</span></div></div>
+  <button class="btn" onclick="go('new')">${ICON.plus} Registrar un inconveniente</button>
+  <h2 class="mt">Tu atención, conectada</h2>
+  <div class="card tap" onclick="tab('list')"><div class="row"><div class="fic">${ICON.pass}</div><div style="flex:1;min-width:0"><span class="small muted">1 · Pasaporte de atención</span><h3 style="margin:2px 0">${cs.length} pasaporte${cs.length===1?'':'s'}</h3><p class="small muted">${cs.length?'Un código único con todo tu historial.':'Se crea al registrar tu primer inconveniente.'}</p></div></div></div>
+  <div class="farrow">↓ cada registro actualiza tus compromisos</div>
+  <div class="card tap" onclick="${next?`openCase('${next.code}','compromisos')`:`tab('list')`}"><div class="row"><div class="fic">${ICON.track}</div><div style="flex:1;min-width:0"><span class="small muted">2 · Panel de compromisos</span><h3 style="margin:2px 0">${act.length} compromisos activos</h3><p class="small muted">${next?`Próximo: <b class="code">${next.code}</b> · ${esc(restante(next))}`:'Sin compromisos pendientes'}</p></div></div></div>
+  <div class="farrow">↓ los plazos los vigila el semáforo</div>
+  <div class="card tap" onclick="tab('sem')"><div class="row"><div class="fic">🚦</div><div style="flex:1;min-width:0"><span class="small muted">3 · Semáforo</span>
+    <div class="row" style="gap:12px;margin:6px 0;flex-wrap:wrap"><span class="row small" style="gap:4px"><span class="luz l-verde"></span><b>${cnt.verde}</b> en plazo</span><span class="row small" style="gap:4px"><span class="luz l-ambar"></span><b>${cnt.ambar}</b> riesgo</span><span class="row small" style="gap:4px"><span class="luz l-rojo"></span><b>${cnt.rojo}</b> detenido</span></div>
+    <p class="small muted">Si tu caso se detiene, se alerta y se reasigna solo.</p></div></div></div>
+  <div class="farrow">↺ cada alerta queda registrada en tu pasaporte</div>
+  ${citas()}
+  <h2 class="mt">Actividad reciente</h2>${cs.slice(0,2).map(c=>caseCard(c)).join('')||`<div class="card empty"><div style="font-size:34px">🪪</div><p><b>Aún no tienes solicitudes</b></p><p class="small">Registra tu primer inconveniente y se generará tu pasaporte de atención.</p><button class="btn mt" onclick="go('new')">${ICON.plus} Registrar un inconveniente</button></div>`}
+  </main>`+bottomNav('home');
+};
+
+/* Mis solicitudes */
+V.list=()=>{
+  let cs=misCasos();
+  if(listF==='activas') cs=cs.filter(c=>c.estado!=='solucionado');
+  if(listF==='solucionadas') cs=cs.filter(c=>c.estado==='solucionado');
+  return topbar('Mis solicitudes','Tus pasaportes de atención')+`<main>
+  <div class="chips mb">${[['todos','Todas'],['activas','Activas'],['solucionadas','Solucionadas']].map(f=>`<button class="chip ${listF===f[0]?'on':''}" onclick="listF='${f[0]}';render()">${f[1]}</button>`).join('')}</div>
+  ${cs.map(c=>caseCard(c)).join('')||`<div class="card empty"><p><b>No hay solicitudes aquí</b></p><p class="small">Toca el botón + para registrar un inconveniente.</p></div>`}<div style="height:70px"></div>
+  </main><button class="fab" onclick="go('new')" aria-label="Nueva solicitud">${ICON.plus}</button>`+bottomNav('list');
+};
+
+/* 2 · REGISTRO DE INCONVENIENTE */
+let nuevo={tipo:'',canal:'App',desc:'',doc:''};
+V.new=()=>topbar('Nuevo inconveniente','',{back:true,noBell:true})+`<main>
+  <div class="card">
+    <label style="margin-top:0">Tipo de inconveniente</label>
+    <select id="f-tipo" onchange="nuevo.tipo=this.value;slaInfo()"><option value="">Selecciona una opción</option>${Object.keys(TIPOS).map(t=>`<option ${nuevo.tipo===t?'selected':''}>${t}</option>`).join('')}</select>
+    <div id="sla-info" class="small" style="margin-top:6px;color:var(--verde-osc)"></div>
+    <label>Canal</label>
+    <div class="chips">${CANALES.map(c=>`<button class="chip ${nuevo.canal===c?'on':''}" onclick="nuevo.desc=document.getElementById('f-desc').value;nuevo.canal='${c}';render()">${c}</button>`).join('')}</div>
+    <label>Cuéntanos qué pasó</label>
+    <textarea id="f-desc" placeholder="Ej.: me cobraron dos veces el mismo consumo..." oninput="nuevo.desc=this.value">${esc(nuevo.desc)}</textarea>
+    <label>Adjuntar documento</label>
+    <label class="btn sec sm" style="margin:0;font-weight:600">${ICON.clip} <span id="docname">${nuevo.doc?esc(nuevo.doc):'Elegir archivo'}</span><input type="file" style="display:none" onchange="nuevo.doc=this.files[0]?this.files[0].name:'';document.getElementById('docname').textContent=nuevo.doc||'Elegir archivo'"></label>
+  </div>
+  <button class="btn" onclick="crearCaso()">Generar mi pasaporte</button>
+  <p class="small muted" style="text-align:center;margin-top:10px">Solo lo cuentas una vez. No compartas claves ni PIN.</p>
+  </main>`;
+function slaInfo(){ const el=document.getElementById('sla-info'); if(!el) return; const t=TIPOS[nuevo.tipo]; el.innerHTML=t?`→ Área responsable: <b>${t.area}</b> · Plazo para el semáforo: <b>${t.sla} h</b>`:''; }
+
+/* 3 · GENERADOR DE CÓDIGO */
+function crearCaso(){
+  nuevo.desc=document.getElementById('f-desc').value;
+  if(!nuevo.tipo){ toast('Selecciona el tipo de inconveniente'); return; }
+  if(nuevo.desc.trim().length<10){ toast('Cuéntanos qué pasó (mínimo 10 caracteres)'); return; }
+  DB.seq++; const code='IBC-2026-'+DB.seq, t=now(), T=TIPOS[nuevo.tipo], resp=ASESORES[DB.seq%ASESORES.length];
+  const c={code,tipo:nuevo.tipo,canal:nuevo.canal,desc:nuevo.desc.trim(),created:t,sla:T.sla,area:T.area,responsable:resp,estado:'registrado',blocked:false,blockReason:'',
+    pasos:PASOS.map((p,i)=>({n:p,done:i<1})),history:[],docs:[],last:t};
+  c.history.push({t,who:'cliente',ch:nuevo.canal,txt:c.desc,doc:nuevo.doc||undefined}); if(nuevo.doc) c.docs.push(nuevo.doc);
+  c.history.push({t:t+1000,who:'sistema',ch:nuevo.canal,txt:`Pasaporte ${code} creado. Área: ${T.area}. Responsable: ${resp}. Plazo comprometido: ${T.sla} h.`});
+  DB.cases.push(c); notify(code,`Tu pasaporte ${code} fue creado. Cualquier asesor podrá continuar tu caso con este código.`);
+  save(); nuevo={tipo:'',canal:'App',desc:'',doc:''};
+  dTab='pasaporte'; stack=[{name:'home',params:{}}]; view={name:'detail',params:{code}}; render();
+  sheet(`<div style="text-align:center"><h3 style="font-size:18px">¡Pasaporte creado!</h3><p class="muted small">Tu código único es</p>
+    <div class="card" style="border:2px solid var(--gris-bd);box-shadow:none;margin:8px 0"><span class="code" style="font-size:24px">${code}</span></div>
+    <button class="btn" onclick="copiar('${code}')">Copiar código</button>
+    ${AUTO[c.tipo]?`<div style="background:var(--verde-cl);border:1.5px solid var(--verde);border-radius:14px;padding:12px;margin-top:12px;text-align:left"><b style="color:var(--verde-osc)">⚡ Solución inmediata disponible</b><p class="small" style="margin-top:4px">Este caso se puede resolver ahora mismo, sin esperar.</p><button class="btn mt" onclick="autoResolver('${code}')">${AUTO[c.tipo].btn}</button></div>`:''}
+    <button class="btn gris mt" onclick="closeSheet()">Ver mi pasaporte</button>
+    <p class="small muted mt">Menciona este código en llamada o agencia: no tendrás que repetir tu consulta.</p></div>`);
+  setTimeout(()=>respuestaInicial(code),7000);
+}
+function copiar(code){ try{navigator.clipboard.writeText(code).then(()=>toast('Código copiado'),()=>toast('Tu código: '+code));}catch(e){toast('Tu código: '+code);} }
+function respuestaInicial(code){
+  const c=getCase(code); if(!c||c.estado!=='registrado') return;
+  const t=now(); c.estado='proceso'; c.last=t;
+  c.history.push({t,who:'asesor',by:c.responsable,ch:'App',txt:`Hola, soy ${c.responsable}. Ya tengo tu pasaporte ${code} con toda la información. Estoy validando tu caso.`});
+  notify(code,`${c.responsable} tomó tu caso ${code}.`); save(); render(); toast('💬 '+c.responsable+' respondió en tu pasaporte');
+}
+
+/* Solución inmediata */
+function autoResolver(code){
+  const c=getCase(code), A=AUTO[c.tipo]; if(!A) return; c.autoTried=true;
+  sheet(`<h3 style="text-align:center">⚡ Resolviendo tu caso</h3><p class="small muted" style="text-align:center">${code}</p><div id="autoSteps" class="mt"></div>`);
+  let i=0;
+  const tick=()=>{
+    const box=document.getElementById('autoSteps'); if(!box) return;
+    const fin=i===A.pasos.length-1;
+    box.innerHTML=A.pasos.slice(0,i+1).map((p,k)=>`<div class="row" style="padding:8px 0"><div class="chk ${k<i||fin?'on':'now'}">${k<i||fin?'✓':''}</div><span style="font-size:14px">${esc(p)}</span></div>`).join('');
+    i++;
+    if(i<A.pasos.length) setTimeout(tick,900);
+    else setTimeout(()=>{ solucionar(c,A.fin,'Solución inmediata en menos de 1 minuto: '+A.fin); closeSheet(); dTab='pasaporte'; view={name:'detail',params:{code}}; render(); toast('¡Caso solucionado al instante!'); },900);
+  };
+  tick();
+}
+
+/* Detalle del caso: 3 pestañas o cierre */
+function segTabs(){ return `<div class="seg">${[['pasaporte','🪪 Pasaporte'],['compromisos','📋 Compromisos'],['semaforo','🚦 Semáforo']].map(t=>`<button class="${dTab===t[0]?'on':''}" onclick="dTab='${t[0]}';render()">${t[1]}</button>`).join('')}</div>`; }
+const CONN={
+  pasaporte:'🔗 Cada registro actualiza el <b>Panel de compromisos</b> y reinicia el contador de "sin movimiento" del <b>Semáforo</b>.',
+  compromisos:'🔗 El plazo de este panel es lo que mide el <b>Semáforo</b>. Cada avance queda en tu <b>Pasaporte</b>.',
+  semaforo:'🔗 Cada cambio de color queda registrado en tu <b>Pasaporte</b> y, si llega a rojo, el <b>Panel</b> muestra al nuevo responsable.'
+};
+V.detail=({code,hist})=>{
+  const c=getCase(code); if(!c) return topbar('No encontrado','',{back:true})+'<main><div class="empty">Pasaporte no encontrado</div></main>';
+  if(c.estado==='solucionado'&&!hist) return V.solved(c);
+  const s=semaforo(c);
+  return topbar('Mi caso',c.code,{back:true})+`<main>
+  <div class="card hero"><div class="row between"><span class="code" style="font-size:17px">${c.code}</span><span class="badge" style="background:#fff;color:var(--texto)"><span class="luz ${SEM[s].l}"></span>${SEM[s].t}</span></div>
+    <h3 style="margin-top:8px">${esc(c.tipo)}</h3><p class="small" style="opacity:.9">${ESTADOS[c.estado]} · ${esc(c.area)}${c.prioridad&&c.estado!=='solucionado'?' · ⚑ Prioridad alta':''}</p>
+    <div class="progress" style="background:rgba(255,255,255,.25)"><div style="width:${pct(c)}%;background:#fff"></div></div>
+    <div class="row between small"><span>${pct(c)}% completado</span><span>${esc(restante(c))}</span></div></div>
+  ${segTabs()}
+  ${dTab==='pasaporte'?tabPasaporte(c):dTab==='compromisos'?tabCompromisos(c):tabSemaforo(c)}
+  <div class="conn">${CONN[dTab]}</div>
+  </main>`+bottomNav('list');
+};
+
+/* 4 · HISTORIAL (Pasaporte) */
+function timeline(c){
+  return `<div class="tl">${c.history.slice().sort((a,b)=>a.t-b.t).map(h=>{
+    const who=h.who==='cliente'?'Tú':h.who==='asesor'?'Asesor'+(h.by?' · '+esc(h.by):''):h.ch==='Semáforo'?'🚦 Semáforo':'Sistema Conecta';
+    return `<div class="tl-item ${h.who}"><div class="who">${who}${h.ch!=='Semáforo'?`<span class="pill-ch">${esc(h.ch||'App')}</span>`:''} <span style="font-weight:400">· ${fmtFecha(h.t)}</span></div><div class="txt">${esc(h.txt)}</div>${h.doc?`<div class="doc">📎 ${esc(h.doc)}</div>`:''}</div>`;}).join('')}</div>`;
+}
+function tabPasaporte(c){
+  const abierto=c.estado!=='solucionado'; let h='';
+  if(abierto&&AUTO[c.tipo]&&!c.autoTried) h+=`<div class="card" style="background:var(--verde-cl)"><h3 style="color:var(--verde-osc)">⚡ Solución inmediata disponible</h3><p class="small">Resuelve este caso ahora, sin esperar.</p><button class="btn mt" onclick="autoResolver('${c.code}')">${AUTO[c.tipo].btn}</button></div>`;
+  h+=`<div class="card"><div class="row between"><h3>Historial del pasaporte</h3><span class="small muted">${c.history.length} registros</span></div><p class="small muted mb">App, llamada, agencia y semáforo en un solo lugar.</p>${timeline(c)}
+  ${c.docs.length?`<div class="sep"></div><p class="small muted">Documentos (${c.docs.length})</p>${c.docs.map(d=>`<div class="doc">${esc(d)}</div>`).join(' ')}`:''}</div>`;
+  if(abierto) h+=`<div class="card"><h3>Agregar información</h3>
+    <textarea id="msg" placeholder="Mensaje..." style="min-height:70px"></textarea>
+    <label class="btn gris sm" style="margin-top:8px;color:var(--texto);font-weight:600">${ICON.clip} <span id="mdoc">Adjuntar documento</span><input type="file" id="mfile" style="display:none" onchange="document.getElementById('mdoc').textContent=this.files[0]?this.files[0].name:'Adjuntar documento'"></label>
+    <button class="btn mt" onclick="msgCliente('${c.code}')">${ICON.send} Enviar</button></div>
+    <button class="btn sec mb" onclick="cambiarCanal('${c.code}')">${ICON.headset} Continuar por otro canal</button>`;
+  return h;
+}
+function msgCliente(code){
+  const c=getCase(code), txt=document.getElementById('msg').value.trim(), f=document.getElementById('mfile').files[0];
+  if(!txt&&!f){ toast('Escribe un mensaje o adjunta un documento'); return; }
+  const t=now(); c.history.push({t,who:'cliente',ch:'App',txt:txt||'Adjuntó un documento',doc:f?f.name:undefined}); if(f) c.docs.push(f.name);
+  if(c.estado==='espera') c.estado='proceso'; c.last=t; save(); render(); toast('Agregado a tu pasaporte');
+}
+function cambiarCanal(code){
+  sheet(`<h3>Continuar por otro canal</h3><p class="muted small mb">El asesor abrirá tu pasaporte <b class="code">${code}</b>. No repites nada.</p>
+  <button class="btn gris mt" style="justify-content:flex-start" onclick="closeSheet();pedirLlamada('${code}')">${ICON.phone} Que me llamen · sin esperar en línea</button>
+  <button class="btn gris mt" style="justify-content:flex-start" onclick="closeSheet();go('turno',{code:'${code}'})">${ICON.ticket} Turno en agencia · sin colas</button>
+  <button class="btn gris mt" style="justify-content:flex-start" onclick="canalWeb('${code}')">${ICON.link} Banca por internet</button>`);
+}
+function canalWeb(code){ const c=getCase(code), t=now(); c.history.push({t,who:'sistema',ch:'Banca por internet',txt:'Continuaste tu atención por Banca por internet. El asesor accedió a tu pasaporte sin pedirte que repitas tu consulta.'}); c.last=t; save(); closeSheet(); render(); toast('Ingresa tu código en la banca: '+code); }
+function pedirLlamada(code){
+  const fr=['Lo antes posible (≈15 min)','Hoy 12:00 – 13:00','Hoy 17:00 – 18:00','Mañana 9:00 – 10:00'];
+  sheet(`<h3>Que me llamen</h3><p class="small muted mb">Un asesor te llamará con tu pasaporte <b class="code">${code}</b> abierto.</p>${fr.map(f=>`<button class="btn gris sm mt" onclick="confirmarLlamada('${code}','${f}')">${ICON.phone} ${f}</button>`).join('')}`);
+}
+function confirmarLlamada(code,fr){
+  const c=getCase(code), t=now(); DB.llamadas.push({code,fr,estado:'programada'});
+  c.history.push({t,who:'sistema',ch:'Llamada',txt:`Llamada programada: ${fr}. Te llamará ${c.responsable} con tu pasaporte abierto.`}); c.last=t;
+  notify(code,`Te llamaremos: ${fr}. Ten a la mano tu código ${code}.`); save(); closeSheet(); render(); toast('Llamada programada');
+}
+let turnoSel={ag:0,dia:0,hora:-1};
+V.turno=({code})=>{
+  const dias=['Hoy','Mañana','Pasado mañana'];
+  return topbar('Turno en agencia',code,{back:true,noBell:true})+`<main>
+  <div class="card" style="background:var(--verde-cl)"><p class="small"><b>Sin colas:</b> llegas a tu hora, vas a la <b>Ventanilla Conecta</b> y el asesor ya tiene tu caso abierto.</p></div>
+  <div class="card"><label style="margin-top:0">Agencia</label>
+    <select onchange="turnoSel.ag=+this.value;turnoSel.hora=-1;render()">${AGENCIAS.map((a,i)=>`<option value="${i}" ${turnoSel.ag===i?'selected':''}>${a}</option>`).join('')}</select>
+    <label>Día</label><div class="chips">${dias.map((d,i)=>`<button class="chip ${turnoSel.dia===i?'on':''}" onclick="turnoSel.dia=${i};turnoSel.hora=-1;render()">${d}</button>`).join('')}</div>
+    <label>Hora · afluencia (semáforo)</label>
+    <div class="grid2">${HORAS.map((h,i)=>{const v=afluencia(turnoSel.ag+turnoSel.dia,i),k=colorAfl(v),on=turnoSel.hora===i; return `<button class="chip ${on?'on':''}" style="border-radius:12px;padding:10px;text-align:left" onclick="turnoSel.hora=${i};render()"><b>${h}</b><br><span class="row small" style="gap:5px;margin-top:4px"><span class="luz l-${k}"></span>${k==='verde'?'Baja':k==='ambar'?'Media':'Alta'}</span></button>`;}).join('')}</div>
+    <p class="small muted mt">💡 Elige una hora en verde para no hacer cola.</p></div>
+  <button class="btn" onclick="confirmarTurno('${code}')">${ICON.ticket} Reservar turno</button></main>`;
+};
+function confirmarTurno(code){
+  if(turnoSel.hora<0){ toast('Elige una hora'); return; }
+  const c=getCase(code), dias=['Hoy','Mañana','Pasado mañana'], tk='C-'+String(++DB.tseq).padStart(3,'0');
+  const tr={tk,code,ag:AGENCIAS[turnoSel.ag],dia:dias[turnoSel.dia],hora:HORAS[turnoSel.hora],estado:'reservado'}; DB.turnos.push(tr);
+  const t=now(); c.history.push({t,who:'sistema',ch:'Agencia',txt:`Turno ${tk} reservado en ${tr.ag} · ${tr.dia} ${tr.hora}. El asesor de agencia recibirá tu pasaporte antes de la cita.`}); c.last=t;
+  notify(code,`Turno ${tk} confirmado: ${tr.ag}, ${tr.dia} a las ${tr.hora}.`); save(); turnoSel={ag:0,dia:0,hora:-1};
+  dTab='compromisos'; stack=[{name:'home',params:{}}]; view={name:'detail',params:{code}}; render();
+  sheet(`<div style="text-align:center"><p class="muted">Tu turno</p><p class="code" style="font-size:40px;color:var(--verde-osc);margin:4px 0">${tk}</p><p><b>${esc(tr.ag)}</b></p><p>${tr.dia} · ${tr.hora}</p>
+  <div class="card mt" style="background:var(--gris-cl);box-shadow:none"><p class="small">Pasaporte vinculado: <b class="code">${code}</b></p><p class="small">Espera estimada: <b>menos de 5 minutos</b></p></div><button class="btn" onclick="closeSheet()">Entendido</button></div>`);
+}
+function citas(code){
+  const ts=DB.turnos.filter(t=>t.estado==='reservado'&&(!code||t.code===code)), ls=DB.llamadas.filter(l=>l.estado==='programada'&&(!code||l.code===code));
+  if(!ts.length&&!ls.length) return '';
+  const items=ts.map(t=>`<div class="row small" style="padding:6px 0">🎫 <span><b>Turno ${t.tk}</b> · ${t.dia} ${t.hora} · ${esc(t.ag)}${code?'':' · '+t.code}</span></div>`).join('')+ls.map(l=>`<div class="row small" style="padding:6px 0">📞 <span><b>Te llamaremos</b> · ${esc(l.fr)}${code?'':' · '+l.code}</span></div>`).join('');
+  return code?`<div class="sep"></div><p class="small muted">Citas vinculadas</p>${items}`:`<div class="card"><h3>Mis citas</h3>${items}</div>`;
+}
+
+/* 5 · PESTAÑA DE CASO (Compromisos) */
+function tabCompromisos(c){
+  const idx=c.pasos.findIndex(p=>!p.done);
+  return `<div class="card"><h3>Panel de compromisos</h3>
+    <div class="grid2 small" style="margin:8px 0">
+      <div><span class="muted">Área</span><br><b>${esc(c.area)}</b></div><div><span class="muted">Asesor</span><br><b>${esc(c.responsable)}</b></div>
+      <div><span class="muted">Plazo</span><br><b>${c.sla} h</b></div><div><span class="muted">Fecha límite</span><br><b>${fmtFecha(deadline(c))}</b></div></div>
+    <div class="sep"></div><p class="small">Pendiente: <b>${esc(pendiente(c))}</b></p><p class="small">Tiempo estimado: <b>${esc(restante(c))}</b></p>
+    ${c.estado==='espera'?`<p class="small" style="color:#9A6B00;background:var(--ambar-cl);padding:8px 10px;border-radius:10px">El asesor espera tu respuesta o documento.</p>`:''}
+    ${citas(c.code)}</div>
+  <div class="card"><h3>Pasos</h3><div class="steps">${c.pasos.map((p,i)=>`<div class="st"><div class="chk ${p.done?'on':(i===idx?'now':'')}">${p.done?'✓':''}</div><div style="flex:1"><div style="font-size:14px;${p.done?'':'font-weight:600'}">${p.n}${p.done?' ✓':''}</div><div class="small muted">${p.done?'Completado':(i===idx?'En curso · '+esc(c.area):'Pendiente')}</div></div></div>`).join('')}</div></div>
+  <button class="btn gris sm mb" onclick="avanceBanco('${c.code}')">▶ Simular avance del banco (demo)</button>`;
+}
+
+/* Pestaña Semáforo del caso */
+function tabSemaforo(c){
+  const s=semaforo(c), n=now(), used=Math.max(0,Math.round((n-c.created)/(c.sla*H)*100)), sin=Math.max(0,Math.round((n-c.last)/H));
+  const L=(k,col)=>`<div style="width:44px;height:44px;border-radius:50%;background:${s===k?col:'#3a4650'};box-shadow:${s===k?'0 0 16px '+col:'none'}"></div>`;
+  const fill=s==='rojo'?'var(--rojo)':s==='ambar'?'var(--ambar)':'var(--verde)';
+  const ev=c.history.filter(h=>h.ch==='Semáforo').sort((a,b)=>b.t-a.t);
+  return `<div class="card"><div class="row" style="gap:16px">
+    <div style="background:#1F2A33;border-radius:28px;padding:9px;display:flex;flex-direction:column;gap:8px">${L('rojo','#D93025')}${L('ambar','#F2A900')}${L('verde','#00A651')}</div>
+    <div style="flex:1;min-width:0">${semBadge(c)}<h3 style="margin-top:8px">${esc(motivo(c))}</h3>
+    <p class="small muted">${s==='verde'?'Tu caso avanza dentro del plazo comprometido.':s==='ambar'?'Se envió una alerta preventiva a '+esc(c.responsable)+'.':'Tu caso fue reasignado con prioridad a '+esc(c.responsable)+'.'}</p></div></div>
+    <label>Plazo consumido · ${used}%</label>
+    <div style="position:relative;height:12px;background:var(--gris-cl);border-radius:6px;overflow:hidden"><div style="height:100%;width:${Math.min(100,used)}%;background:${fill}"></div><div style="position:absolute;left:60%;top:0;bottom:0;width:2px;background:#9A6B00"></div></div>
+    <div class="row between small muted" style="margin-top:3px"><span>0%</span><span style="margin-left:18%">60% ámbar</span><span>100% rojo</span></div>
+    <label>Sin movimiento · ${sin} h</label>
+    <div style="position:relative;height:12px;background:var(--gris-cl);border-radius:6px;overflow:hidden"><div style="height:100%;width:${Math.min(100,sin/48*100)}%;background:${sin>48?'var(--rojo)':sin>24?'var(--ambar)':'var(--verde)'}"></div><div style="position:absolute;left:50%;top:0;bottom:0;width:2px;background:#9A6B00"></div></div>
+    <div class="row between small muted" style="margin-top:3px"><span>0 h</span><span>24 h ámbar</span><span>48 h rojo</span></div>
+    ${c.blocked?`<p class="small mt" style="color:var(--rojo);background:var(--rojo-cl);padding:8px 10px;border-radius:10px"><b>Bloqueo:</b> ${esc(c.blockReason)}</p>`:''}</div>
+  <div class="card small"><div class="row" style="padding:4px 0"><span class="luz l-verde"></span><span><b>Verde:</b> monitorea</span></div><div class="row" style="padding:4px 0"><span class="luz l-ambar"></span><span><b>Ámbar:</b> alerta al responsable</span></div><div class="row" style="padding:4px 0"><span class="luz l-rojo"></span><span><b>Rojo:</b> reasigna solo y te avisa</span></div></div>
+  <div class="card"><h3>Eventos del semáforo</h3>${ev.length?ev.map(e=>`<div style="padding:8px 0;border-top:1px dashed var(--gris-bd)"><p class="small muted">${fmtFecha(e.t)}</p><p class="small">${esc(e.txt)}</p></div>`).join(''):'<p class="small muted">Sin alertas: tu caso siempre estuvo en verde.</p>'}</div>`;
+}
+
+/* 6 · SEMÁFORO (pestaña principal) */
+V.sem=()=>{
+  const segBar=`<div class="seg" style="grid-template-columns:1fr 1fr">${[['sol','🚦 Solicitudes'],['ag','🏦 Agencias']].map(t=>`<button class="${semSeg===t[0]?'on':''}" onclick="semSeg='${t[0]}';render()">${t[1]}</button>`).join('')}</div>`;
+  if(semSeg==='ag'){
+    return topbar('Semáforo','Afluencia en agencias hoy')+`<main>${segBar}
+    <div class="card"><label style="margin-top:0">Agencia</label><select onchange="agSel=+this.value;render()">${AGENCIAS.map((a,i)=>`<option value="${i}" ${agSel===i?'selected':''}>${a}</option>`).join('')}</select>
+    <p class="small muted mt">Verde: poca gente · Ámbar: espera media · Rojo: mucha gente.</p></div>
+    ${HORAS.map((h,i)=>{const v=afluencia(agSel,i),k=colorAfl(v); return `<div class="card row" style="padding:12px 14px;border-left:5px solid var(--${k})"><b style="width:52px">${h}</b><div style="flex:1"><div class="progress" style="margin:0"><div style="width:${v}%;background:var(--${k})"></div></div></div><span class="badge ${SEM[k].cls}" style="width:70px;justify-content:center">${v}%</span></div>`;}).join('')}
+    <button class="btn" onclick="elegirParaTurno()">${ICON.ticket} Reservar turno en hora verde</button></main>`+bottomNav('sem');
+  }
+  const cs=misCasos(), cnt={verde:0,ambar:0,rojo:0,ok:0}; cs.forEach(c=>cnt[semaforo(c)]++);
+  const ord={rojo:0,ambar:1,verde:2,ok:3};
+  let lista=cs.sort((a,b)=>ord[semaforo(a)]-ord[semaforo(b)]); if(semF!=='todos') lista=lista.filter(c=>semaforo(c)===semF);
+  const ch=(f,lab)=>`<button class="chip ${semF===f?'on':''}" onclick="semF='${f}';render()">${lab}</button>`;
+  return topbar('Semáforo','Estado de tus solicitudes')+`<main>${segBar}
+  <div class="chips mb">${ch('todos','Todos')}${ch('rojo','🔴 '+cnt.rojo)}${ch('ambar','🟡 '+cnt.ambar)}${ch('verde','🟢 '+cnt.verde)}${ch('ok','✔ '+cnt.ok)}</div>
+  ${lista.map(c=>caseCard(c,'semaforo')).join('')||`<div class="card empty"><div style="font-size:34px">🚦</div><p><b>${cs.length?'No hay casos con este color':'Aún no hay solicitudes que vigilar'}</b></p>${cs.length?'':'<p class="small">Cuando registres un inconveniente, el semáforo vigilará su plazo.</p>'}</div>`}
+  <div class="card small muted"><b>Criterios:</b> 🟢 avanza en plazo · 🟡 usó más del 60% del plazo o 24 h sin movimiento · 🔴 bloqueado, plazo vencido o 48 h sin movimiento.</div>
+  </main>`+bottomNav('sem');
+};
+function elegirParaTurno(){
+  const act=misCasos().filter(c=>c.estado!=='solucionado');
+  if(!act.length){ toast('Primero registra un inconveniente'); return; }
+  turnoSel.ag=agSel;
+  if(act.length===1){ go('turno',{code:act[0].code}); return; }
+  sheet(`<h3>¿Para qué caso es el turno?</h3>${act.map(c=>`<button class="btn gris sm mt" style="justify-content:space-between" onclick="closeSheet();go('turno',{code:'${c.code}'})"><span class="code">${c.code}</span><span>${esc(c.tipo)}</span></button>`).join('')}`);
+}
+
+/* 7 · CASO SOLUCIONADO */
+V.solved=(c)=>{
+  const canales=[]; c.history.forEach(h=>{ if(h.ch&&h.ch!=='Semáforo'&&!canales.includes(h.ch)) canales.push(h.ch); });
+  const alertas=c.history.filter(h=>h.ch==='Semáforo'&&/ÁMBAR|ROJO/.test(h.txt)).length;
+  return topbar('Mi caso',c.code,{back:true})+`<main>
+  <div class="card" style="background:var(--verde-cl);border:1.5px solid var(--verde)"><div class="row between"><span class="code" style="font-size:16px">${c.code}</span><span class="badge b-azul">✔ Solucionado</span></div>
+    <h3 style="margin-top:6px">${esc(c.tipo)}</h3><div class="progress"><div style="width:100%"></div></div><div class="row between small muted"><span>100% completado</span><span>Caso cerrado</span></div></div>
+  <div class="card" style="text-align:center"><div style="width:72px;height:72px;border-radius:50%;background:var(--verde);color:#fff;font-size:40px;display:flex;align-items:center;justify-content:center;margin:6px auto 10px">✓</div>
+    <h3 style="font-size:19px">¡Tu caso fue solucionado!</h3><p class="muted">${esc(c.solucion||TIPOS[c.tipo].sol)}</p></div>
+  <div class="card"><h3>Resumen de tu atención</h3>
+    <p class="small" style="margin-top:8px">🪪 Canales: <b>${esc(canales.join(' → '))}</b></p>
+    <p class="small">💬 Consultas repetidas: <b style="color:var(--verde-osc)">0</b></p>
+    <p class="small">📋 Compromiso cumplido: <b>${c.pasos.filter(p=>p.done).length} de ${c.pasos.length} pasos</b></p>
+    <p class="small">🚦 Alertas del semáforo: <b>${alertas}${alertas?' (atendida'+(alertas>1?'s':'')+')':''}</b></p>
+    <p class="small">⏱ Tiempo total: <b>${fmtDur((c.solvedAt||c.last)-c.created)}</b></p></div>
+  <div class="card" style="text-align:center"><h3>¿Cómo calificas la atención?</h3>
+    <div class="row" style="justify-content:center;gap:8px;font-size:34px;margin:8px 0">${[1,2,3,4,5].map(i=>`<span style="cursor:pointer;color:${(c.rating||0)>=i?'#F2A900':'#D0D5D9'}" onclick="calificar('${c.code}',${i})">★</span>`).join('')}</div>
+    <p class="small muted">${c.rating?'¡Gracias por tu calificación!':'Toca las estrellas para calificar'}</p></div>
+  <button class="btn sec" onclick="dTab='pasaporte';go('detail',{code:'${c.code}',hist:true})">Ver historial completo</button>
+  </main>`+bottomNav('list');
+};
+function calificar(code,n){ getCase(code).rating=n; save(); render(); toast('¡Gracias por calificar!'); }
+
+/* Simulación del lado del banco (el cliente no ve la app del asesor) */
+function solucionar(c,sol,txt){
+  const t=now(); c.pasos.forEach(p=>p.done=true); c.estado='solucionado'; c.blocked=false; c.solucion=sol; c.solvedAt=t; c.last=t;
+  c.history.push({t,who:c.autoTried&&AUTO[c.tipo]&&txt.startsWith('Solución inmediata')?'sistema':'asesor',by:c.responsable,ch:'App',txt});
+  notify(c.code,`✅ ¡Tu caso ${c.code} fue solucionado! ${sol}`); save();
+}
+function avanceBanco(code){
+  const c=getCase(code); if(!c||c.estado==='solucionado') return;
+  const i=c.pasos.findIndex(p=>!p.done), t=now();
+  c.autoEsc=false; c.blocked=false; c.estado='proceso';
+  if(i===c.pasos.length-1){ solucionar(c,TIPOS[c.tipo].sol,`${TIPOS[c.tipo].sol} Caso solucionado.`); render(); toast('✅ Tu caso fue solucionado'); return; }
+  c.pasos[i].done=true; c.last=t;
+  const msg=i===1?'Validamos tu información. Ahora tu caso pasa a revisión del área responsable.':`El área de ${c.area} revisó tu caso. En breve te damos la solución.`;
+  c.history.push({t,who:'asesor',by:c.responsable,ch:'App',txt:msg});
+  notify(code,`Tu caso ${code} avanzó: "${c.pasos[i].n}" completado.`); save(); render(); toast('Tu caso avanzó: '+c.pasos[i].n);
+}
+
+/* Avisos y perfil */
+V.notifs=()=>{
+  const html=topbar('Avisos','',{back:true,noBell:true})+`<main>${DB.notifs.map(n=>`<div class="card tap" onclick="openCase('${n.code}')" style="${n.read?'':'border-left:4px solid var(--verde)'}"><p class="small muted">${fmtFecha(n.t)} · <span class="code">${n.code}</span></p><p style="font-size:14px">${esc(n.txt)}</p></div>`).join('')||'<div class="empty">No tienes avisos</div>'}</main>`+bottomNav('home');
+  DB.notifs.forEach(n=>n.read=true); save(); return html;
+};
+V.profile=()=>topbar('Perfil','')+`<main>
+  <div class="card row"><div style="width:56px;height:56px;border-radius:50%;background:var(--verde-cl);color:var(--verde-osc);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px">${esc(iniciales())}</div><div><b>${esc(nombre())}</b><div class="muted small">Cliente Interbank Conecta</div></div></div>
+  <div class="card"><h3>Mi resumen</h3><p class="small">Pasaportes creados: <b>${DB.cases.length}</b></p><p class="small">Casos solucionados: <b>${DB.cases.filter(c=>c.estado==='solucionado').length}</b></p><p class="small">Consultas repetidas: <b style="color:var(--verde-osc)">0</b></p></div>
+  <div class="card"><h3>Avisos</h3>${['Notificación en la app','Correo electrónico','SMS'].map((p,i)=>`<div class="row between" style="padding:8px 0"><span style="font-size:14px">${p}</span><input type="checkbox" ${i<2?'checked':''} style="width:24px;height:24px;-webkit-appearance:checkbox;appearance:auto;accent-color:var(--verde)"></div>`).join('')}</div>
+  <div class="card" style="border:1.5px dashed var(--gris-bd)"><h3>Herramientas de demostración</h3><p class="small muted mb">Para el testing: simulan lo que hace el banco por detrás.</p>
+    <div class="grid2"><button class="btn gris sm" onclick="pasoTiempo(12)">⏱ +12 horas</button><button class="btn gris sm" onclick="pasoTiempo(24)">⏱ +1 día</button></div>
+    <button class="btn gris sm mt" onclick="avanzarTodos()">▶ Simular respuesta del banco</button>
+    ${DB.offset?`<p class="small muted mt">Reloj simulado: +${Math.round(DB.offset/H)} h</p>`:''}</div>
+  <button class="btn gris" onclick="reiniciar()">Borrar mis solicitudes</button>
+  <button class="btn sec mt" onclick="salir()">${ICON.logout} Salir</button></main>`+bottomNav('profile');
+function pasoTiempo(h){ DB.offset+=h*H; save(); render(); const c=DB.cases.filter(c=>['ambar','rojo'].includes(semaforo(c))).length; toast(`Reloj +${h} h · ${c} caso(s) con alerta del semáforo`); }
+function avanzarTodos(){ const act=DB.cases.filter(c=>c.estado!=='solucionado'); if(!act.length){toast('No tienes casos activos');return;} act.forEach(c=>avanceBanco(c.code)); toast('El banco avanzó '+act.length+' caso(s)'); }
+function reiniciar(){ const n=DB.nombre; DB=seed(); DB.nombre=n; DB.started=true; save(); stack=[]; view={name:'home',params:{}}; render(); toast('Solicitudes borradas'); }
+function salir(){ DB=seed(); save(); stack=[]; view={name:'login',params:{}}; render(); }
+
+function render(){
+  if(monitor()) save();
+  document.getElementById('app').innerHTML=(V[view.name]||V.login)(view.params||{});
+  if(view.name==='new') slaInfo();
+}
+render();
+
+</script>
+</body>
+</html>
